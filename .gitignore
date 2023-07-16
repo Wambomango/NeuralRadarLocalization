@@ -1,1 +1,4 @@
 *.pyc
+Data/test_data.npz
+Data/training_data.npz
+Resources

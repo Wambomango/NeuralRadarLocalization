@@ -3,8 +3,7 @@
                     "c": 299792458,
                     "movement": {   "tracking_space": [[-5, -5, 0], [5, 5, 2]],
                                     "sampling_rate": 10,
-                                    "samples_per_trajectory": 10,
-                                    "motion_models": {  "CTRA": {   "trajectories": 100 ,
+                                    "motion_models": {  "CTRA": {   "proportion": 0.5,
                                                                     "minimum_initial_velocity": 0,
                                                                     "maximum_initial_velocity": 0.5,
                                                                     "minimum_acceleration": 0,
@@ -12,7 +11,7 @@
                                                                     "minimum_turn_rate": 0,
                                                                     "maximum_turn_rate": 2},
 
-                                                        "GaussianRandomWalk":   {   "trajectories": 100,
+                                                        "GaussianRandomWalk":   {   "proportion": 0.5,
                                                                                     "minimum_variance": 0,
                                                                                     "maximum_variance": 0.01}}}},
         
@@ -59,7 +58,19 @@
                                 [-0.01926872,  0.19592237, 0],
                                 [-0.19397162,  0.05798278, 0],
                                 [-0.19966989,  0.07665946, 0],
-                                [-0.00719812, -0.12886036, 0]]}]
+                                [-0.00719812, -0.12886036, 0]]}],
+
+    "training": {   "samples_per_trajectory": 10,
+                    "training_trajectories": 50000,
+                    "test_trajectories": 1000,   
+                    "training_data": "./Data/training_data.npz",
+                    "test_data": "./Data/test_data.npz",
+                    "checkpoints": "./Checkpoints",
+
+                    "epochs": 100,
+                    "batch_size": 1000,
+                    "learning_rate": 1E-4
+    }
 }
 
 

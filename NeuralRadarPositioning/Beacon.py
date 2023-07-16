@@ -1,27 +1,25 @@
 from NeuralRadarPositioning.MotionModels.CTRA import CTRA as CTRA
-from NeuralRadarPositioning.MotionModels.GaussianRandomWalk import GaussianRandomWalk as GaussianRandomWalk
+from NeuralRadarPositioning.MotionModels.GaussianRandomWalk import (
+    GaussianRandomWalk as GaussianRandomWalk,
+)
 import numpy as np
 
+
 class Beacon:
-    def __init__(self, config): 
-
+    def __init__(self, config):
         self.tracking_space = np.array(config["beacon"]["movement"]["tracking_space"]).T
-        self.samples_per_trajectory = config["beacon"]["movement"]["samples_per_trajectory"]
         self.motion_models = {}
-        self.motion_models["CTRA"] = CTRA(config)
-        self.motion_models["GaussianRandomWalk"] = GaussianRandomWalk(config)
+        self.CTRA = CTRA(config)
+        self.GaussianRandomWalk = GaussianRandomWalk(config)
+        self.samples_per_trajectory = config["training"]["samples_per_trajectory"]
+        self.training_trajectories = config["training"]["training_trajectories"]
+        self.test_trajectories = config["training"]["test_trajectories"]
 
-    def generate_trajectories(self):
+    def generate_trajectories(self, n_trajectories=1):
+        n_ctra = int(np.ceil(self.CTRA.proportion * n_trajectories))
+        n_grw = int(np.ceil(self.CTRA.proportion * n_trajectories))
 
-        offsets = [0]
-        for key in self.motion_models:
-            offsets.append(offsets[-1] + self.motion_models[key].trajectories)
-
-        trajectories = np.zeros((offsets[-1],self.samples_per_trajectory,3))
-
-        i = 0
-        for key in self.motion_models:
-            trajectories[offsets[i]:offsets[i+1]] = self.motion_models[key].generate_trajectories()
-            i += 1
-
-        return trajectories
+        trajectories = np.zeros((n_ctra + n_grw, self.samples_per_trajectory, 3))
+        trajectories[:n_ctra] = self.CTRA.generate_trajectories(n_ctra)
+        trajectories[n_ctra:] = self.GaussianRandomWalk.generate_trajectories(n_grw)
+        return trajectories[:n_trajectories]
