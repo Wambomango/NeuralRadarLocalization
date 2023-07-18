@@ -1,5 +1,5 @@
-from NeuralRadarPositioning.MotionModels.CTRA import CTRA as CTRA
-from NeuralRadarPositioning.MotionModels.GaussianRandomWalk import (
+from NeuralRadarLocalization.MotionModels.CTRA import CTRA as CTRA
+from NeuralRadarLocalization.MotionModels.GaussianRandomWalk import (
     GaussianRandomWalk as GaussianRandomWalk,
 )
 import numpy as np

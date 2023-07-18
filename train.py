@@ -4,11 +4,10 @@ import json
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
-from NeuralRadarPositioning.Model.NeuRaP import NeuRaP as NeuRaP
-from NeuralRadarPositioning.Generator.NumpyDataset import NumpyDataset
+from NeuralRadarLocalization.Model.NeuRaL import NeuRaL as NeuRaL
+from NeuralRadarLocalization.Generator.NumpyDataset import NumpyDataset
 
 config_file = "./config.json"
-
 
 with open(config_file, "r") as f:
     config = json.load(f)
@@ -24,9 +23,14 @@ test_dataloader = DataLoader(
     test_data, batch_size=config["training"]["batch_size"], shuffle=True
 )
 
-model = NeuRaP(config).cuda()
+model = NeuRaL(config).cuda()
 loss_function = torch.nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters(), config["training"]["learning_rate"])
+optimizer = torch.optim.Adam(
+    model.parameters(),
+    config["training"]["learning_rate"],
+    weight_decay=config["training"]["weight_decay"],
+)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=50)
 
 
 checkpoint_path = os.path.join(
@@ -49,13 +53,19 @@ for epoch in range(config["training"]["epochs"]):
         estimated_trajectory = model(measurements)
 
         loss = loss_function(estimated_trajectory, trajectory)
-        loss.backward()
 
+        optimizer.zero_grad()
+        loss.backward()
         optimizer.step()
+
+        with torch.no_grad():
+            for name, W in model.named_parameters():
+                if "bias" in name:
+                    W[torch.abs(W) < 0.2] = 0
 
         total_loss += loss
 
-    print("Training loss", torch.sqrt(total_loss / len(train_dataloader)))
+    print("Training loss", torch.sqrt(total_loss / len(train_dataloader)).item())
 
     model.eval()
     total_loss = 0
@@ -68,9 +78,11 @@ for epoch in range(config["training"]["epochs"]):
 
             loss = loss_function(estimated_trajectory, trajectory)
 
-            total_loss += loss
+        total_loss += loss
 
-        print("Test loss", torch.sqrt(total_loss / len(test_dataloader)))
+        scheduler.step(total_loss)
+
+        print("Test loss", torch.sqrt(total_loss / len(test_dataloader)).item())
 
         if total_loss < best_val_loss:
             print("New best val loss")

@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
-from NeuralRadarPositioning.MotionModels.MotionModel import MotionModel
+from NeuralRadarLocalization.MotionModels.MotionModel import MotionModel
 
 
 class CTRA(MotionModel):
