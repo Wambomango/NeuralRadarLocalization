@@ -1,12 +1,10 @@
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
-from NeuralRadarLocalization.MotionModels.MotionModel import MotionModel
 
 
-class CTRA(MotionModel):
+class CTRA:
     def __init__(self, config):
-        super().__init__()
         self.tracking_space = np.array(config["beacon"]["movement"]["tracking_space"])
         self.sampling_rate = config["beacon"]["movement"]["sampling_rate"]
         self.proportion = config["beacon"]["movement"]["motion_models"]["CTRA"][

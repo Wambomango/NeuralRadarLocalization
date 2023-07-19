@@ -88,10 +88,10 @@
                     "test_data": "./Data/test_data.npz",
                     "checkpoints": "./Checkpoints",
 
-                    "epochs": 1000,
-                    "batch_size": 1000,
-                    "learning_rate": 1E-5,
-                    "weight_decay": 1E-3
+                    "epochs": 2000,
+                    "batch_size": 5000,
+                    "learning_rate": 1E-4,
+                    "weight_decay": 1E-2
     }
 }
 
