@@ -1,4 +1,5 @@
 *.pyc
-Data
-Checkpoints
-Resources
+Data/
+Checkpoints/
+Resources/
+runs/

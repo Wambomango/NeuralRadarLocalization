@@ -11,7 +11,9 @@ from NeuralRadarLocalization.Generator.NumpyDataset import NumpyDataset
 
 
 config_file = "./config.json"
-experiment_name = "LSTM 5 Iterations 64 State Loss over all Steps"
+experiment_name = (
+    "LSTM 4 Iterations 64 State Loss over all Steps Removed Weight Clipping"
+)
 
 
 with open(config_file, "r") as f:
@@ -66,11 +68,6 @@ for epoch in range(config["training"]["epochs"]):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
-        with torch.no_grad():
-            for name, W in model.named_parameters():
-                if "bias" in name:
-                    W[torch.abs(W) < 0.2] = 0
 
         total_loss += loss
 

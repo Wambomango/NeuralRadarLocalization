@@ -11,7 +11,7 @@ class NeuRaL(torch.nn.Module):
             n_antennas = len(array["antennas"])
             self.feature_size += int(n_antennas * (n_antennas - 1) / 2)
 
-        self.lstm_steps = 5
+        self.lstm_steps = 4
         self.lstm_state_size = 64
         self.LSTM = torch.nn.LSTM(
             self.feature_size, self.lstm_state_size, batch_first=True
